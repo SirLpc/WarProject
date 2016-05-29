@@ -85,21 +85,25 @@ namespace DajiaGame.Px
             _childRenderers = GetComponentsInChildren<SpriteRenderer>();
         }
 
+        private void Start()
+        {
+            _bodyCollider.enabled = false;
+            _baseCollider.enabled = false;
+        }
+
         public void OnCollisionEnter2D(Collision2D collision)
         {
             ZhanPanCtr zp = collision.gameObject.GetComponent<ZhanPanCtr>();
             if (zp != null)
             {
-                Stop();
-                transform.SetParent(zp.transform);
-                FIRER_RESULT fr = CheckFireResult(transform.eulerAngles.z, this);
-                GameCtr.Instance.SettleFireResult(fr);
+                OnHitZhanPan(zp);
                 return;
             }
             PinCtr pin = collision.gameObject.GetComponent<PinCtr>();
             if (pin != null)
             {
-                Debug.Log("game over!");
+                OnHitOtherPin(pin);
+                return;
             }
         }
 
@@ -129,13 +133,31 @@ namespace DajiaGame.Px
 
         public void Fire()
         {
+            _bodyCollider.enabled = true;
+            _baseCollider.enabled = true;
             _body.AddForce(Vector2.up * _speed);
         }
 
-        public void Stop()
+        private void Stop()
         {
             _bodyCollider.enabled = false;
             _body.isKinematic = true;
+        }
+
+        private void OnHitZhanPan(ZhanPanCtr zp)
+        {
+            Stop();
+            transform.SetParent(zp.transform);
+            FIRER_RESULT fr = CheckFireResult(zp.transform.eulerAngles.z, this);
+            GameCtr.Instance.SettleFireResult(fr);
+
+            GameCtr.Instance.IsReadyFire = true;
+        }
+
+        private void OnHitOtherPin(PinCtr pin)
+        {
+            Debug.Log("game over!");
+            GameCtr.Instance.OverGame();
         }
 
         #endregion
@@ -155,7 +177,7 @@ namespace DajiaGame.Px
         //    return angle < perfectAngle.Min || angle > perfectAngle.Max;
         //}
 
-        public static FIRER_RESULT CheckFireResult(float angle, PinCtr pin)
+        private static FIRER_RESULT CheckFireResult(float angle, PinCtr pin)
         {
             FIRER_RESULT result = FIRER_RESULT.GAP;
             for (int i = 0; i < Consts.ZhuanPanPice; i++)
@@ -168,7 +190,7 @@ namespace DajiaGame.Px
             return result;
         }
 
-        public static bool IsInPiceAngle(float angle, PIN_TYPE type)
+        private static bool IsInPiceAngle(float angle, PIN_TYPE type)
         {
             var perfectAngle = DicOfPinPerfectAngle[type];
 

@@ -15,6 +15,7 @@ namespace DajiaGame.Px
         private float _speed;
 
         private Rigidbody2D _body;
+        private Tweener _zhanPanTweener = null;
         #endregion
 
         #region ===属性===
@@ -33,18 +34,25 @@ namespace DajiaGame.Px
             Rotate();
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
+        private void OnDestroy()
         {
-
+            if (_zhanPanTweener != null)
+                _zhanPanTweener.Kill();
         }
 
         #endregion
 
         #region ===方法===
 
+        public void Stop()
+        {
+            if (_zhanPanTweener != null)
+                _zhanPanTweener.Pause();
+        }
+
         private void Rotate()
         {
-            DOTween.To(() => 0f, z => { _body.MoveRotation(z); }, 360f, 360f / _speed)
+            _zhanPanTweener = DOTween.To(() => 0f, z => { _body.MoveRotation(z); }, 360f, 360f / _speed)
                 .SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
         }
 

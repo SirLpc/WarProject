@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using JetBrains.Annotations;
+using System.Collections;
+using UnityEngine.Events;
 
 namespace DajiaGame.Px
 {
@@ -14,10 +15,15 @@ namespace DajiaGame.Px
 		#region ===字段===
 
         public static GameCtr Instance = null;
+        public ScoreChangeEvent OnScoreChanged;
 
-        [SerializeField] private GameObject _pinPrefab;
+        [SerializeField]
+        private GameObject _pinPrefab;
+        [SerializeField]
+        private ZhanPanCtr _zhanPanCtr;
 
-        private Queue<PinCtr> _queueOfPins; 
+        private Queue<PinCtr> _queueOfPins;
+        private int _score;
 
 	    #endregion
 
@@ -25,18 +31,28 @@ namespace DajiaGame.Px
 
         public bool IsReadyFire { get; set; }
 
-	    #endregion
+        public int Score {
+            get { return _score; }
+            private set {
+                _score = value;
+                OnScoreChanged.Invoke(value);
+            }
+        }
 
-		#region ===Unity事件=== 快捷键： Ctrl + Shift + M /Ctrl + Shift + Q  实现
+        #endregion
+
+        #region ===Unity事件=== 快捷键： Ctrl + Shift + M /Ctrl + Shift + Q  实现
 
         private void Awake()
         {
             Instance = this;
             _queueOfPins = new Queue<PinCtr>();
+            OnScoreChanged = new ScoreChangeEvent();
         }
 
         private void Start()
         {
+            Score = 0;
             PrepareAPin();
             IsReadyFire = true;
         }
@@ -60,16 +76,26 @@ namespace DajiaGame.Px
 
         public void SettleFireResult(FIRER_RESULT fr)
         {
-            Debug.Log(fr.ToString());
+            var score = 0;
             switch (fr)
             {
                 case FIRER_RESULT.GAP:
+                    score = 30;
                     break;
                 case FIRER_RESULT.NORMAL:
+                    score = 20;
                     break;
                 case FIRER_RESULT.OUT:
+                    score = 10;
                     break;
             }
+            Score += score;
+        }
+
+        public void OverGame()
+        {
+            _zhanPanCtr.Stop();
+            IsReadyFire = false;
         }
 
         private void PrepareAPin()
@@ -87,9 +113,18 @@ namespace DajiaGame.Px
             IsReadyFire = false;
 
             _queueOfPins.Dequeue().Fire();
+            StartCoroutine(CoReadyNextPin());
+        }
+
+        private IEnumerator CoReadyNextPin()
+        {
+            yield return null;
             PrepareAPin();
+
         }
 
         #endregion
     }
+
+    public class ScoreChangeEvent : UnityEvent<int> { }
 }
