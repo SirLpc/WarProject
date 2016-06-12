@@ -43,7 +43,7 @@ public class PlayerPath : MonoBehaviour
     public void StartMove()
     {
         playerSelected = true;
-        MoveOnFloor();
+        MoveOnFloorStart();
         trailReference.Clear();
     }
 
@@ -59,7 +59,12 @@ public class PlayerPath : MonoBehaviour
         playerSelected = false;
     }
 
-	void MoveOnFloor()
+    void MoveOnFloorStart()
+    {
+        trailReference.transform.position = GetComponentInChildren<Player>().transform.position + trailOffset;
+    }
+
+    void MoveOnFloor()
 	{
 		RaycastHit hit;
 		if(Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, 
