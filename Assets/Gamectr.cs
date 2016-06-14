@@ -7,10 +7,10 @@ public class Gamectr : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 1; i < 100; i++)
-        {
-            Debug.Log(i + "==" + Mathf.Sqrt(i));
-        }
+        //for (int i = 1; i < 100; i++)
+        //{
+        //    Debug.Log(i + "==" + Mathf.Sqrt(i));
+        //}
     }
 	
 	private void Update ()
