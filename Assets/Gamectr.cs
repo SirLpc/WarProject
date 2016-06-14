@@ -4,8 +4,16 @@ using System.Collections;
 public class Gamectr : MonoBehaviour
 {
     private PlayerPath _currentPath = null;
+
+    private void Start()
+    {
+        for (int i = 1; i < 100; i++)
+        {
+            Debug.Log(i + "==" + Mathf.Sqrt(i));
+        }
+    }
 	
-	void Update ()
+	private void Update ()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -15,7 +23,7 @@ public class Gamectr : MonoBehaviour
             if (Physics.Raycast(ray, out hit, float.MaxValue))
             {
                 var ln = LayerMask.LayerToName(hit.transform.gameObject.layer);
-                if (!ln.Equals(PlayerPath.PlayerLayerName))
+                if (!ln.Equals(Consts.PlayerLayerName))
                     return;
                 _currentPath = hit.transform.GetComponentInParent<PlayerPath>();
                 if (_currentPath == null)

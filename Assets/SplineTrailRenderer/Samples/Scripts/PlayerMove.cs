@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour 
+public class PlayerMove : MonoBehaviour 
 {
 	public float speed;
 	public SplineTrailRenderer trailReference;
@@ -10,13 +10,27 @@ public class Player : MonoBehaviour
 	private float distance = 0;
 	private Vector3 lastPosition;
 
-	void Start()
+    public void StopMove()
+    {
+        trailReference.Clear();
+    }
+
+    public void ChangSpeed(float targetSpeed)
+    {
+       speed = targetSpeed;
+    }
+
+
+
+
+    void Start()
 	{
 		lastPosition = transform.position;
 	}
 	
 	void Update () 
 	{
+
 		float length = trailReference.spline.Length(); 
 
 		distance = Mathf.Clamp(distance + speed * Time.deltaTime, 0, length-0.1f);
@@ -43,4 +57,5 @@ public class Player : MonoBehaviour
 			transform.position = lastPosition = position;
 		}
 	}
+
 }

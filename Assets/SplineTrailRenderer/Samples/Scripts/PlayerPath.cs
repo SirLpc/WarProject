@@ -4,12 +4,11 @@ using System.Collections;
 public class PlayerPath : MonoBehaviour 
 {
 	public SplineTrailRenderer trailReference;
-	public const string GroundLayerName = "Water";
-	public const string PlayerLayerName = "Default";
 	public Vector3 trailOffset = new Vector3(0, 0.02f, 0);
 
 	private bool playerSelected = false;
 	
+    //todo 删除之前的无用代码
 	void Update_kill () 
 	{
 		if(Input.GetMouseButtonDown(0))
@@ -21,7 +20,7 @@ public class PlayerPath : MonoBehaviour
             if (Physics.Raycast(ray, out hit, float.MaxValue))
             {
                 var ln = LayerMask.LayerToName(hit.transform.gameObject.layer);
-                if (!ln.Equals(PlayerLayerName) || hit.transform.root != this.transform)
+                if (!ln.Equals(Consts.PlayerLayerName) || hit.transform.root != this.transform)
                     return;
 
                 playerSelected = true;
@@ -61,14 +60,14 @@ public class PlayerPath : MonoBehaviour
 
     void MoveOnFloorStart()
     {
-        trailReference.transform.position = GetComponentInChildren<Player>().transform.position + trailOffset;
+        trailReference.transform.position = GetComponentInChildren<PlayerMove>().transform.position + trailOffset;
     }
 
     void MoveOnFloor()
 	{
 		RaycastHit hit;
 		if(Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, 
-			Input.mousePosition.y, 0)), out hit, float.MaxValue, LayerNameToIntMask(GroundLayerName)))
+			Input.mousePosition.y, 0)), out hit, float.MaxValue, LayerNameToIntMask(Consts.GroundLayerName)))
 		{
 			trailReference.transform.position = hit.point + trailOffset;
 		}
