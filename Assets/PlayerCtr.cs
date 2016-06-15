@@ -27,15 +27,20 @@ public class PlayerCtr : MonoBehaviour
 
     private void Start()
     {
-        //_antNum = Random.Range(9, 26);
-        _antNum = 9;
-        int sqrNum = (int)Mathf.Sqrt(_antNum);
+        _antNum = Random.Range(9, 26);
+        //_antNum = 12;
+        Debug.Log(_antNum);
+        int sqrNum = Mathf.CeilToInt(Mathf.Sqrt(_antNum));
         float size, tx, tz, nx;
         size = tx = tz = nx = 0f;
+        int row = 0;
         for (int i = 0; i < sqrNum; i++)
         {
             for (int j = 0; j < sqrNum; j++)
             {
+                if (i * sqrNum + (j + 1) > _antNum)
+                    break;
+
                 Transform tr = Instantiate(_antPrefab).transform;
                 if(i == 0)
                 {
@@ -45,7 +50,6 @@ public class PlayerCtr : MonoBehaviour
                     {
                         size = r.bounds.size.x;
                         tx = tz = nx = sqrNum * size / 2 + (-1) * size / 2;
-                        Debug.Log(tx);
                     }
                 }
                 tr.SetParent(_antContainer);
@@ -55,8 +59,11 @@ public class PlayerCtr : MonoBehaviour
             tz -= size;
             tx = nx;
         }
-        float colSize = sqrNum * size;
-        _collider.size = new Vector3(colSize, _collider.bounds.size.y, colSize);
+        float colSizeX = sqrNum * size;
+        int offset = sqrNum - Mathf.RoundToInt(Mathf.Sqrt(_antNum));
+        float colSizeZ = colSizeX - offset * size;
+        _collider.size = new Vector3(colSizeX, _collider.bounds.size.y, colSizeZ);
+        _collider.center += Vector3.forward * size * offset / 2;
     }
 
 	#endregion

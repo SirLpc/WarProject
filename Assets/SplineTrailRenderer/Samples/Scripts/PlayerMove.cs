@@ -52,7 +52,7 @@ public class PlayerMove : MonoBehaviour
 					anim.CrossFade("Walk");
 				}
 			}
-
+            forward = new Vector3(forward.x, 0, forward.z);
 			transform.forward = forward;
 			transform.position = lastPosition = position;
 		}
