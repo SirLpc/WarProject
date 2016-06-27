@@ -15,7 +15,7 @@ public class PlayerCtr : MonoBehaviour
 
     private PlayerMove _moveInstance;
     private PlayerFight _fightInstance;
-    private List<Transform> _ants; 
+    private Dictionary<Vector2, Transform> _ants; 
 
 	#endregion
 
@@ -31,9 +31,15 @@ public class PlayerCtr : MonoBehaviour
         get { return _fightInstance ?? (_fightInstance = GetComponentInChildren<PlayerFight>()); }
     }
 
-    public List<Transform> Ants
+    /// <summary>
+    /// 右上角为00，左下角为maxmax
+    /// 02  01  00
+    /// 12  11  10
+    /// 22  21  20
+    /// </summary>
+    public Dictionary<Vector2, Transform> Ants
     {
-        get { return _ants ?? (_ants = new List<Transform>()); }
+        get { return _ants ?? (_ants = new Dictionary<Vector2, Transform>()); }
     } 
 
     public int AntNum
@@ -85,8 +91,8 @@ public class PlayerCtr : MonoBehaviour
             while (Ants.Count - HP / 10 >= 1)
             {
                 int lastIndex = Ants.Count - 1;
-                PoolTotleMgr.Instance.Despawn(Ants[lastIndex]);
-                Ants.RemoveAt(lastIndex);
+                //PoolTotleMgr.Instance.Despawn(Ants[lastIndex]);
+                //Ants.RemoveAt(lastIndex);
             }
         }
     }
@@ -104,7 +110,7 @@ public class PlayerCtr : MonoBehaviour
                 if (i * sqrNum + (j + 1) > _antNum)
                     break;
                 Transform tr = PoolTotleMgr.Instance.Spawn(Consts.UnitPrefName[(int)_troopType]);
-                Ants.Add(tr);
+                Ants.Add(new Vector2(i, j), tr);
                 if (i == 0)
                 {
                     SpriteRenderer r = tr.GetComponent<SpriteRenderer>();
@@ -130,6 +136,10 @@ public class PlayerCtr : MonoBehaviour
         float colSizeZ = colSizeX - offset * sizeX;
         _collider.size = new Vector3(colSizeX, _collider.bounds.size.y, colSizeZ);
         _collider.center += Vector3.forward * sizeX * offset / 2;
+
+
+        //Ants[Vector2.zero].GetComponent<SpriteRenderer>().color = Color.blue;
+        //Ants[new Vector2(0, 4)].GetComponent<SpriteRenderer>().color = Color.cyan;
     }
 
     #endregion
