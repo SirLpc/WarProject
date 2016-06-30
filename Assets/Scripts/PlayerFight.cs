@@ -16,7 +16,7 @@ public class PlayerFight : MonoBehaviour
 
     public PlayerCtr Ctr
     {
-        get { return _ctr ?? (GetComponentInParent<PlayerCtr>()); }
+        get { return _ctr ?? (_ctr = GetComponentInParent<PlayerCtr>()); }
     }
 
     public int ATK
@@ -75,9 +75,9 @@ public class PlayerFight : MonoBehaviour
             for (int i = 0; i < EnemyCtrs.Count; i++)
             {
                 PlayerCtr item = EnemyCtrs[i];
-                if (item.gameObject.activeSelf)
+                if (item.HP > 0)
                     item.TakeDamage(ATK);
-                if (!item.gameObject.activeSelf)
+                if (item.HP <= 0)
                     EnemyCtrs.Remove(item);
             }
         }
